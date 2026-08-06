@@ -26,6 +26,29 @@ app.get(("/get", (req,res) =>{
 }))
 
 
+
+app.get("/get/:id", (req,res) => {
+
+const book = books.find((item) => item.id === req.params.id)
+if(book){
+    res.status(200).json({
+        book : book,
+    })}
+
+
+
+
+ else{
+
+    req.status(404).json({
+        message : " falilurreeeeeeeee",
+    })
+}
+
+}
+)
+
+
 app.post("/add", (req,res) => {
       const newBook = {
     id: Math.floor(Math.random() * 1000).toString(),
@@ -36,7 +59,7 @@ res.status(200).json({
     data : " received",
     book :  newBook,
 })
-
+})
 
 
 
