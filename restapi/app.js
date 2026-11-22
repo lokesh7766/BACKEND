@@ -1,107 +1,45 @@
-const express = require('express');
-const app = express();
+const http = require('http')
+const fs = require('fs')
+const path = require('path');
+ server = http.createServer((req,res) => {
+ let filepath ;
+ if (req.url === '/' ){
+  filepath = 'index.html';
 
-app.use(express.json);
-let books = [
-    { id: '1',
-        book: 'book 1'
-    },
-    {}
-]
-
-// intro rut 
+  res.status(400)
 
 
-app.get( '/',(req,res ) => {
-res.json({message: "welome to our page"});
-})
-//get books 
-app.get('/getbooks',(req,res) => {
-
-    res.json(books);
-})
-
-
-
-app.get('/get/:id',(req,res) => {
-const findbook = books.find((item ) => {item.id == req.params.id})
-if(findbook){
-    res.json.status(200)
-    res.json(findbook)
-}
-else{
-    console.log("book not found ")
-}
-
-
-})
-
-
-///add book 
-app.post('/add',(req,res) => {
-    const newbook = {
-
-        id : books.length + 1,
-        title: `book ${books.length
-            + 1
-        }`
-
+ }
+ else if( req.url === '/about'){
+  filepath = 'about.html'
+ }
+ else if (req.url === '/contactme') {
+        filePath = 'contact.html';
+    } 
+    else {
+        filePath = '404.html';
+        res.statusCode = 404;
     }
-books.push(newbook)
-res.json.status(200)
-res.json(
-    {
-        data : newbook,
-        message : "books added ",
-    }
-)
+
+    const fullPath = path.join(__dirname, filePath);
+ fs.readFile(fullPath,(err,data) =>{
+     if (err) {
+            res.statusCode = 500;
+            res.end('Internal Server Error');
+            return;
+        }
+
+        res.setHeader('Content-Type', 'text/html');
+        res.end(data);
+ })
+  res.end('this is home page ');
+
 })
 
+const port = 8080;
+server.listen(port, () =>{
 
 
-
-
-app.put("/update/:id", (req, res) => {
-  const findCurrentBook = books.find(
-    (bookItem) => bookItem.id === req.params.id
-  );
-  if (findCurrentBook) {
-    findCurrentBook.title = req.body.title || findCurrentBook.title;
-
-    res.status(200).json({
-      message: `Book with ID ${req.params.id} updated successfully`,
-      data: findCurrentBook,
-    });
-  } else {
-    res.status(404).json({
-      message: "Book not found",
-    });
-  }
-});
-app.delete("/delete/:id", (req, res) => {
-  const findIndexOfCurrentBook = books.findIndex(
-    (item) => item.id === req.params.id
-  );
-  if (findIndexOfCurrentBook !== -1) {
-    const deletedBook = books.splice(findIndexOfCurrentBook, 1);
-    res.status(200).json({
-      message: "Book deleted successfully",
-      data: deletedBook[0],
-    });
-  } else {
-    res.status(404).json({
-      message: "Book not found",
-    });
-  }
-});
-
-
-
-
-
-const PORT  = 3000;
-app.listen(PORT,() => {
-
-        console.log("port running succesfull ");
-        
+  console.log("sserver running 8080");
+  
 })
